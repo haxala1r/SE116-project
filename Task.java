@@ -4,7 +4,7 @@ public class Task {
 	
 	public Task(String taskType, int taskSize) {
 		this.taskType = new TaskType(taskType);
-		taskSize = taskSize;
+		this.taskSize = taskSize;
 	}
 	
 	public Task(String taskType) {
