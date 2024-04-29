@@ -1,8 +1,8 @@
 public class Task {
 	private TaskType taskType;
-	private int taskSize;
+	private double taskSize;
 	
-	public Task(String taskType, int taskSize) {
+	public Task(String taskType, double taskSize) {
 		this.taskType = new TaskType(taskType);
 		this.taskSize = taskSize;
 	}

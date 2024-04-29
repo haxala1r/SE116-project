@@ -1,8 +1,8 @@
 public class TaskType {
 	private String taskTypeName;
-	private int defaultTaskSize;
+	private double defaultTaskSize;
 	
-	public TaskType(String taskTypeName, int defaultTaskSize) {
+	public TaskType(String taskTypeName, double defaultTaskSize) {
 		this.taskTypeName = taskTypeName;
 		this.defaultTaskSize = defaultTaskSize;
 	}
@@ -19,7 +19,7 @@ public class TaskType {
 		return taskTypeName;
 	}
 	
-	public int getDefaultTaskSize() {
+	public double getDefaultTaskSize() {
 		return defaultTaskSize;
 	}
 }
