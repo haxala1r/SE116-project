@@ -95,6 +95,29 @@ public class Station {
         this.idle = idle;
     }
 
-    // TODO: Adding and Removing Tasks
+    public void addTask(Task task) {
+        waitingTasks.add(task);
+    }
+
+    // This can change after execute 
+    public void removeTask(Task task) {
+        waitingTasks.remove(task);
+    }
+
+    // TODO: Execute Tasks
+
+    public void executeTasks() {
+        if (waitingTasks.isEmpty()) {
+            idle = true;
+            return;
+        }
+        // TODO: while loop (index <= (?) waitingTasks.size())
+    }
+
+    // TODO: Assign Tasks (public / private (?))
+    private void assignNextTask(Task task) {
+        // TODO: Decide how to choose the task (?) if random:
+        // int randomIndex = (int) (Math.random() * )
+    }
 
 }
