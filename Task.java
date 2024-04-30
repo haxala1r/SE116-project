@@ -1,18 +1,27 @@
 public class Task {
+	private String taskID;
 	private TaskType taskType;
 	private double taskSize;
 	
-	public Task(String taskType, double taskSize) {
-		this.taskType = new TaskType(taskType);
+	public Task(String taskID, TaskType taskType, double taskSize) {
+		this.taskID = taskID;
+		this.taskType = taskType;
 		this.taskSize = taskSize;
 	}
 	
-	public Task(String taskType) {
-		this(taskType, taskType.getDefaultSize());
+	public Task(String taskID, TaskType taskType) {
+		this(taskID, taskType, taskType.getDefaultSize());
 	}
 
-	public Task() {
-		this("default");
+	public String getTaskID() {
+		return taskID;
 	}
 	
+	public TaskType getTaskType() {
+		return taskType;
+	}
+	
+	public double getTaskSize() {
+		return taskSize;
+	}
 }

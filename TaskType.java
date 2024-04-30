@@ -1,6 +1,8 @@
+import java.util.ArrayList;
 public class TaskType {
 	private String taskTypeName;
 	private double defaultTaskSize;
+	private ArrayList<TaskType> allTaskTypes = new ArrayList<>();
 	
 	public TaskType(String taskTypeName, double defaultTaskSize) {
 		this.taskTypeName = taskTypeName;
@@ -21,5 +23,9 @@ public class TaskType {
 	
 	public double getDefaultTaskSize() {
 		return defaultTaskSize;
+	}
+	
+	public static void addNewTaskType(TaskType newTaskType) {
+		allTaskTypes.add(newTaskType);
 	}
 }
