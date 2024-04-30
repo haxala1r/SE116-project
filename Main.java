@@ -64,7 +64,7 @@ public class Main {
 
 				// TODO: change this to use the double directly
 				// once TaskType is updated to use double as well.
-				int parsed = (int)Double.parseDouble(defaultSize);
+				double parsed = Double.parseDouble(defaultSize);
 				if (parsed < 0) {
 					throw new InvalidSyntaxException("TaskType " + typeName + " has negative default size.", fname, lineNumber);
 				}
@@ -145,7 +145,7 @@ public class Main {
 		//TODO: catch exceptions
 		readWorkFlowFile("workflow.txt");
 		for (TaskType i : taskTypes) {
-			System.out.printf("TaskType{ name: %s, defaultSize: %d}%n", i.getTaskTypeName(), i.getDefaultTaskSize());
+			System.out.printf("TaskType{ name: %s, defaultSize: %f}%n", i.getTaskTypeName(), i.getDefaultTaskSize());
 		}
 	}
 }
