@@ -10,11 +10,7 @@ public class TaskType {
 	}
 	
 	public TaskType(String taskTypeName) {
-		this(taskTypeName, 5);
-	}
-	
-	public TaskType() {
-		this("default");
+		this(taskTypeName, -1.0);
 	}
 	
 	public String getTaskTypeName() {
