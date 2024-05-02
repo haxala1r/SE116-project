@@ -3,7 +3,7 @@ public class Job{
   String jobTypeID;
   int startTime;
   int duration;
-  public Job(String jobID,String jobTyprID,int startTime,int duration){
+  public Job(String jobID,String jobTypeID,int startTime,int duration){
        this.jobID = jobID;
        this.jobTypeID = jobTypeID;
        this.startTime = startTime;
