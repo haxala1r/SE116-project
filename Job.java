@@ -17,7 +17,7 @@ public class Job{
         this.jobID = jobID;
     }
 
-    public String getJobType() {
+    public JobType getJobType() {
         return jobType;
     }
 
@@ -43,7 +43,7 @@ public class Job{
   public String toString() {
         return "Job{" +
                 "jobID='" + jobID + '\'' +
-                ", jobTypeID='" + jobTypeID + '\'' +
+                ", jobTypeID='" + jobType.getJobTypeID() + '\'' +
                 ", startTime=" + startTime +
                 ", duration=" + duration +
                 '}';

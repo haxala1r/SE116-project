@@ -2,7 +2,7 @@ import java.util.ArrayList;
 public class TaskType {
 	public class MissingSizeException extends Exception {
 		public MissingSizeException() {
-			super("No size specified for the task nor the task type had a default size."));
+			super("No size specified for the task nor the task type had a default size.");
 		}
 	}
 	private String taskTypeName;
@@ -29,5 +29,9 @@ public class TaskType {
 	
 	public static void addNewTaskType(TaskType newTaskType) {
 		allTaskTypes.add(newTaskType);
+	}
+	public static ArrayList<TaskType> getAllTaskTypes() {
+		// return a copy to avoid breaking encapsulation.
+		return new ArrayList<>(allTaskTypes);
 	}
 }
