@@ -9,7 +9,7 @@ public class Task {
 		this.taskSize = taskSize;
 	}
 	
-	public Task(String taskID, TaskType taskType) throws MissingSizeException {
+	public Task(String taskID, TaskType taskType) throws TaskType.MissingSizeException {
 		this(taskID, taskType, taskType.getDefaultTaskSize());
 	}
 
