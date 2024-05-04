@@ -1,11 +1,11 @@
 public class Job{
-  String jobID;
-  String jobTypeID;
-  int startTime;
-  int duration;
-  public Job(String jobID,String jobTypeID,int startTime,int duration){
+  private String jobID;
+  private JobType jobType;
+  private int startTime;
+  private int duration;
+  public Job(String jobID, JobType jobType,int startTime,int duration){
        this.jobID = jobID;
-       this.jobTypeID = jobTypeID;
+       this.jobType = jobType;
        this.startTime = startTime;
        this.duration = duration;
   }
@@ -17,12 +17,12 @@ public class Job{
         this.jobID = jobID;
     }
 
-    public String getJobTypeID() {
-        return jobTypeID;
+    public String getJobType() {
+        return jobType;
     }
 
-    public void setJobTypeID(String jobTypeID) {
-        this.jobTypeID = jobTypeID;
+    public void setJobType( JobType jobType) {
+        this.jobType = jobType;
     }
 
     public int getStartTime() {
