@@ -1,78 +1,55 @@
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.ArrayList;
 import java.lang.Integer;
+import java.lang.NumberFormatException;
 public class Main {
 	public static class InvalidSyntaxException extends Exception {
-		public InvalidSyntaxException(String message, String fname, int lineNumber) {
-			super("[line #" + lineNumber + " in file '" + fname + "'] " + message);
+		public InvalidSyntaxException(String message) {
+			super(message);
 		}
 	}
 	private static ArrayList<TaskType> taskTypes;
-	private static int lineNumber = 1;
 
-	private static void skipWhiteSpace(Scanner sc) {
-		while (sc.hasNext("\\s")) {
-			if (sc.hasNext("\n")) {
-				lineNumber++;
-			}
-			sc.skip("\\s");
-		}
-	}
-	private static void readTaskTypes(Scanner sc, String fname) throws InvalidSyntaxException {
-		skipWhiteSpace(sc);
-		taskTypes = new ArrayList<>();
+	private static void readTaskTypes(String wholeStr) throws InvalidSyntaxException {
+		// we take the whole file as input, then figure out where the task types are.
+		// This probably isn't necessary, but it allows for more flexibility in the input file,
+		// and also lets us avoid reading line-by-line (which can cause some awkward situations
+		// with regex)
+		Pattern subPattern = Pattern.compile("(\\w+)\\s*(\\d+(\\.\\d+)?)?\\s*");
+		Pattern wholePattern = Pattern.compile("\\(TASKTYPES\\s+((\\w+)(\\s+\\d+(\\.\\d+)?)?\\s*)+\\)");
+		Matcher matcher = wholePattern.matcher(wholeStr);
 		
-		// check for beginning parenthesis
-		sc.useDelimiter("[^(]");
-		if (!sc.hasNext("[(]")) {
-			throw new InvalidSyntaxException("line doesn't start with '('", fname, lineNumber); 
-		}
-		sc.next("[(]");
-		sc.useDelimiter("\\s+");
-
-		// check for the TASKTYPES word
-		String word = sc.next("\\w*");
-		if (!word.equals("TASKTYPES")) 
-			throw new InvalidSyntaxException("expected \"TASKTYPES\", found \"" + word + "\"", fname, lineNumber);
+		if (!matcher.find())
+			throw new InvalidSyntaxException("Could not find a valid TaskType list in workflow file.");
 		
-		// parse each task type and add it to the global list of tasktypes.
-		// TODO: maybe add the global list of task types as a static member of TaskType
-		// instead. It doesn't really fit in main.
-		for(;;) {
-			skipWhiteSpace(sc);
-			sc.useDelimiter("[^\\w.]+");
-			if (!sc.hasNext("[A-Za-z][A-Za-z_0-9]*")) {
-				// next word isn't available. check if we're at the end of the
-				// list, otherwise signal exception
-				sc.useDelimiter("[^)]");
-				boolean has = sc.hasNext("[)]");
-				sc.useDelimiter("\\s+");
-				if (!has) {
-					throw new InvalidSyntaxException("expected ')' "  + sc.nextLine(), fname, lineNumber);
-				}
-				break;
-			}
-			String typeName = sc.next("\\w*");
-			
-			skipWhiteSpace(sc);
-			// check for default size
-			String defaultSize = "";
-			if (sc.hasNext("-?[0-9]+([.][0-9]+)?")) {
-				System.out.println();
-				defaultSize = sc.next("-?[0-9]+(\\.[0-9]+)?");
+		String sub = wholeStr.substring(matcher.start() + 10, matcher.end());
+		matcher = subPattern.matcher(sub);
 
-				// TODO: change this to use the double directly
-				// once TaskType is updated to use double as well.
-				double parsed = Double.parseDouble(defaultSize);
-				if (parsed < 0) {
-					throw new InvalidSyntaxException("TaskType " + typeName + " has negative default size.", fname, lineNumber);
-				}
-				
-				taskTypes.add(new TaskType(typeName, parsed));
-			} else {
-				taskTypes.add(new TaskType(typeName));
+		while (matcher.find()) {
+			if (!Character.isLetter(matcher.group(1).charAt(0))) {
+				// invalid TaskType name.
+				System.out.println("'" + matcher.group(1) + "' is not a valid TaskType ID.");
+				continue;
 			}
+
+			if (matcher.group(2) == null) {
+				// no default size.
+				TaskType.addNewTaskType(new TaskType(matcher.group(1)));
+				continue;
+			}
+
+			// default size exists: parse it.
+			double parsed = 0.0;
+			try {
+				parsed = Double.parseDouble(matcher.group(2));
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				continue;
+			}
+			TaskType.addNewTaskType(new TaskType(matcher.group(1), parsed));
 		}
 	}
 
@@ -84,68 +61,51 @@ public class Main {
 			System.out.println("Error: Failed to open workflow file '" + fname + "'");
 			return;
 		}
+		String wholeText = "";
+		while (sc.hasNextLine()) {
+			wholeText += sc.nextLine() + "\n";
+		}
 		
 		// only task types for now, later on JobTypes and Stations will be read here
 		// as well.
-		readTaskTypes(sc, fname);
+		readTaskTypes(wholeText);
 	}
 
-	public static void readJobFile(String fname) {
-		/* Try and open the file. Print an error message on failure. */
-		Scanner sc = null;
-		try {
-			sc = new Scanner(Paths.get(fname));
-		} catch (Exception e) {
-			System.out.println("Error: Failed to open job file '" + fname + "'");
+	public static ArrayList<Job> jobs;
+	public static void readJobFile(String fname) throws Exception {
+		jobs = new ArrayList<>();
+		Scanner sc = new Scanner(Paths.get(fname));
+		Pattern p = Pattern.compile("(\\w+)\\s+(\\w+)\\s+(\\d+)\\s+(\\d+)");
+		
+		int line = 0;
+		boolean hadError = false;
+		while (sc.hasNextLine()) {
+			line++;
+			Matcher m = p.matcher(sc.nextLine());
+			if (!m.matches()) {
+				hadError = true;
+				System.out.println("Line #" + line + " in " + fname + " is an invalid Job declaration.");
+				continue; // still continue though, so we can report all errors at once.
+			}
+			
+			jobs.add(new Job(m.group(1), new JobType(m.group(2)), Integer.parseInt(m.group(3)), Integer.parseInt(m.group(4))));
+		}
+		if (hadError)
+			throw new Exception("Stopped execution because Job file contains error(s).");
+	}
+
+	public static void main(String[] args) throws Exception{
+		if (args.length < 2) {
+			System.out.println("Usage:\n\tjava Main.java [workflow file path] [job file path]");
 			return;
 		}
-
-		/* Now we have a real scanner, we can parse the file. 
-		 * The file format has no multi-line structures, so we will
-		 * parse line-by-line.
-		 */
-		int lineNumber = 1; // keep track of line number for error messages
-		while (sc.hasNextLine()) {
-			String line = sc.nextLine();
-
-			// JobID, JobTypeID, start and duration
-			// all seperated by spaces.
-			String[] fields = line.split(" ");
-			if (fields.length != 4) {
-				System.out.printf("Error in Job file [line %d]: Expected 4 space seperated elements but found %d elements", lineNumber, fields.length);
-				lineNumber++;
-				continue;
-			}
-			String jobID = fields[0];
-			String jobTypeID = fields[1];
-			int startTime = 0;
-			int duration = 0;
-      
-			/* Try to parse the integers, print error messages in case of failure. */
-			try {
-				startTime = Integer.parseInt(fields[2]);
-			} catch (Exception e) {
-				System.out.printf("Error in Job file [line %d]: Expected integer for start time, but found '%s'", lineNumber, fields[2]);
-				lineNumber++;
-				continue;
-			}
-			try {
-				duration = Integer.parseInt(fields[3]);
-			} catch (Exception e) {
-				System.out.printf("Error in Job file [line %d]: Expected integer for duration, but found '%s'", lineNumber, fields[3]);
-			}
-      
-			//TODO: Uncomment this when the Job class is defined.
-			//Job j = new Job(jobID, jobTypeID, startTime, duration);
-			// Then add j into an ArrayList outside the loop.
-			lineNumber++;
-		}
-	}
-	public static void main(String[] args) throws Exception{
-		//TODO: catch exceptions
-		readWorkFlowFile("workflow.txt");
-		for (TaskType i : taskTypes) {
+		readWorkFlowFile(args[0]);
+		for (TaskType i : TaskType.getAllTaskTypes()) {
 			System.out.printf("TaskType{ name: %s, defaultSize: %f}%n", i.getTaskTypeName(), i.getDefaultTaskSize());
+		}
+		readJobFile(args[1]);
+		for (Job i : jobs) {
+			System.out.println(i);
 		}
 	}
 }

@@ -23,7 +23,10 @@ public class TaskType {
 	}
 	
 	public double getDefaultTaskSize() throws MissingSizeException {
-		if (defaultTaskSize == -1.0) throw new MissingSizeException();
+		// Currently this makes it throw an exception regardless of *why* we're
+		// getting the defaultSize, (even if we just want to print it like I do in main)
+		// maybe fix it later?
+		//if (defaultTaskSize == -1.0) throw new MissingSizeException();
 		return defaultTaskSize;
 	}
 	
