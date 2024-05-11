@@ -11,7 +11,7 @@ public class Main {
 			super(message);
 		}
 	}
-	private static ArrayList<TaskType> taskTypes;
+	private static ArrayList<JobType> jobTypes = new ArrayList<>();
 
 	private static void readTaskTypes(String wholeStr) throws InvalidSyntaxException {
 		// we take the whole file as input, then figure out where the task types are.
@@ -52,6 +52,50 @@ public class Main {
 			TaskType.addNewTaskType(new TaskType(matcher.group(1), parsed));
 		}
 	}
+	
+	public static void readJobTypes(String wholeStr) throws InvalidSyntaxException {
+		// Task type and size regex. Task Type ID followed optionally by a size.
+		String tsRegex = "\\s*(\\w+)(\\s+(\\d+(\\.\\d+)?))?\\s*";
+		Pattern tsPattern = Pattern.compile(tsRegex);
+
+		// Description of a single jobType.
+		String jobtypeRegex = "\\s*\\((\\w+)((" + tsRegex + ")+)\\)\\s*";
+		
+		Pattern subPattern = Pattern.compile(jobtypeRegex);
+		Pattern wholePattern = Pattern.compile("\\(JOBTYPES(" + jobtypeRegex + ")+\\)");
+		
+		Matcher wm = wholePattern.matcher(wholeStr);
+		if (!wm.find())
+			throw new InvalidSyntaxException("Could not find a valid JobType list in workflow file.");
+
+		String jobtypes = wholeStr.substring(wm.start() + 9, wm.end());
+		Matcher sm = subPattern.matcher(jobtypes);
+		while (sm.find()) {
+			String jobtypeName = sm.group(1);
+			String tasks = sm.group(2);
+			Matcher tsm = tsPattern.matcher(tasks);
+			
+			if (!Character.isLetter(jobtypeName.charAt(0)))
+				throw new InvalidSyntaxException("'" + jobtypeName + "' is not a valid job type name.");
+			JobType jt = new JobType(jobtypeName);
+			while (tsm.find()) {
+				try {
+					if (tsm.group(3) == null) {
+						// task size wasn't specified.
+						jt.addTask(new Task(tsm.group(1), TaskType.getTaskTypeByID(tsm.group(1))));
+					} else {
+						double parsed = Double.parseDouble(tsm.group(3));
+						jt.addTask(new Task(tsm.group(1), TaskType.getTaskTypeByID(tsm.group(1)), parsed));
+					}
+				} catch (TaskType.MissingSizeException e) {
+					System.out.println("Error for task " + tsm.group(1) + ": " + e.getMessage());
+				}
+			}
+			// TODO: reorganize all jobtypes list, and also check if a TaskType or JobType has
+			// been defined before. throw if yes.
+			jobTypes.add(jt);
+		}
+	}
 
 	public static void readWorkFlowFile(String fname) throws InvalidSyntaxException {
 		Scanner sc = null;
@@ -66,9 +110,8 @@ public class Main {
 			wholeText += sc.nextLine() + "\n";
 		}
 		
-		// only task types for now, later on JobTypes and Stations will be read here
-		// as well.
 		readTaskTypes(wholeText);
+		readJobTypes(wholeText);
 	}
 
 	public static ArrayList<Job> jobs;
@@ -93,6 +136,18 @@ public class Main {
 		if (hadError)
 			throw new Exception("Stopped execution because Job file contains error(s).");
 	}
+	
+	public static void printInfo() {
+		for (TaskType i : TaskType.getAllTaskTypes()) {
+			System.out.printf("TaskType '%s' with default size %f%n", i.getTaskTypeName(), i.getDefaultTaskSize());
+		}
+		for (JobType i : jobTypes) {
+			System.out.printf("JobType '%s' with tasks:%n", i.getJobTypeID());
+			for (Task j : i.getTasks()) {
+				System.out.printf("\tTask '%s' with size %f%n", j.getTaskID(), j.getTaskSize());
+			}
+		}
+	}
 
 	public static void main(String[] args) throws Exception{
 		if (args.length < 2) {
@@ -100,9 +155,8 @@ public class Main {
 			return;
 		}
 		readWorkFlowFile(args[0]);
-		for (TaskType i : TaskType.getAllTaskTypes()) {
-			System.out.printf("TaskType{ name: %s, defaultSize: %f}%n", i.getTaskTypeName(), i.getDefaultTaskSize());
-		}
+		printInfo();
+
 		readJobFile(args[1]);
 		for (Job i : jobs) {
 			System.out.println(i);

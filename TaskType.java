@@ -22,7 +22,7 @@ public class TaskType {
 		return taskTypeName;
 	}
 	
-	public double getDefaultTaskSize() throws MissingSizeException {
+	public double getDefaultTaskSize() {
 		// Currently this makes it throw an exception regardless of *why* we're
 		// getting the defaultSize, (even if we just want to print it like I do in main)
 		// maybe fix it later?
@@ -36,5 +36,12 @@ public class TaskType {
 	public static ArrayList<TaskType> getAllTaskTypes() {
 		// return a copy to avoid breaking encapsulation.
 		return new ArrayList<>(allTaskTypes);
+	}
+	public static TaskType getTaskTypeByID(String id) {
+		for (TaskType i : allTaskTypes) {
+			if (i.taskTypeName.equals(id))
+				return i;
+		}
+		return null;
 	}
 }
