@@ -107,5 +107,53 @@ public class Main {
 		for (Job i : jobs) {
 			System.out.println(i);
 		}
+
+		// The following codes have just been added 
+		while (true) { //This will change
+			executeTasksInAllStations();
+		}
+
+	}
+
+	// The following codes have just been added 
+	private static ArrayList<Station> allStations = new ArrayList<>();
+	
+	private static ArrayList<Station> findNewStations(TaskType taskType, ArrayList<Station> allStations) {
+		ArrayList<Station> suitableStations = new ArrayList<>();
+    	for (Station station : allStations) {
+        	// if (station.canHandleTaskType(taskType)) {
+        	//     suitableStations.add(station);
+        	// }
+    	}
+    return suitableStations;
+	}
+
+	private static Station selectStation(ArrayList<Station> suitableStations) {
+		// Random selection
+		int randomIndex = (int) (Math.random() * suitableStations.size());
+    	return suitableStations.get(randomIndex);
+	}
+
+	private static void proceedAfterTaskCompletion(Task task, ArrayList<Station> allStations) {
+		// TODO find next task
+	}
+
+	private static void manageTaskCompletionEvent(Task completedTask, ArrayList<Station> allStations) {
+		proceedAfterTaskCompletion(completedTask, allStations);
+	}
+
+	private static void executeTasksInAllStations() {
+		for (Station station : allStations) {
+			station.executeTasks();
+		}
+	}
+
+	private static void manageTaskCompletionEvents(ArrayList<Station> allStations) {
+		for (Station station : allStations) {
+			ArrayList<Task> completedTasks = station.getCompletedTasks();
+			for (Task completedTask : completedTasks) {
+				proceedAfterTaskCompletion(completedTask, allStations);
+			}
+		}
 	}
 }

@@ -157,4 +157,13 @@ public class Station {
         }
     }
 
+    public ArrayList<Task> getCompletedTasks() {
+        ArrayList<Task> completedTasks = new ArrayList<>();
+        for (Task task : tasksInProgress) {
+            if (task.isCompleted()) { // it will add to Task class
+                completedTasks.add(task);
+            }
+        }
+        return completedTasks;
+    }
 }
