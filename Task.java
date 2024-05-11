@@ -2,11 +2,13 @@ public class Task {
 	private String taskID;
 	private TaskType taskType;
 	private double taskSize;
+	private double processingTime; // New added
 	
 	public Task(String taskID, TaskType taskType, double taskSize) {
 		this.taskID = taskID;
 		this.taskType = taskType;
 		this.taskSize = taskSize;
+		this.processingTime = calculateExecutionTime(taskSize); // New added
 	}
 	
 	public Task(String taskID, TaskType taskType) throws TaskType.MissingSizeException {
@@ -24,4 +26,17 @@ public class Task {
 	public double getTaskSize() {
 		return taskSize;
 	}
+
+	// New added
+	public void reduceProcessingTime(double time) {
+        processingTime -= time;
+        if (processingTime < 0) {
+            processingTime = 0; 
+        }
+    }
+
+	private double calculateExecutionTime(double taskSize) {
+        double actualSpeed = stationSpeed * (1 + (stationSpeedPercentage * (Math.random() * 2 - 1)));
+        return taskSize / actualSpeed;
+    }
 }

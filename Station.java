@@ -140,10 +140,10 @@ public class Station {
         }
     }
 
-    private double calculateExecutionTime(double taskSize) {
-        double actualSpeed = stationSpeed * (1 + (stationSpeedPercentage * (Math.random() * 2 - 1)));
-        return taskSize / actualSpeed;
-    }
+    // private double calculateExecutionTime(double taskSize) {
+    //     double actualSpeed = stationSpeed * (1 + (stationSpeedPercentage * (Math.random() * 2 - 1)));
+    //     return taskSize / actualSpeed;
+    // }
 
     public void removeTask(Task task) {
         waitingTasks.remove(task);
