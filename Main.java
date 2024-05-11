@@ -11,6 +11,7 @@ public class Main {
 			super(message);
 		}
 	}
+	private static ArrayList<Station> allStations = new ArrayList<>();
 	private static ArrayList<JobType> jobTypes = new ArrayList<>();
 
 	private static void readTaskTypes(String wholeStr) throws InvalidSyntaxException {
@@ -136,41 +137,7 @@ public class Main {
 		if (hadError)
 			throw new Exception("Stopped execution because Job file contains error(s).");
 	}
-	
-	public static void printInfo() {
-		for (TaskType i : TaskType.getAllTaskTypes()) {
-			System.out.printf("TaskType '%s' with default size %f%n", i.getTaskTypeName(), i.getDefaultTaskSize());
-		}
-		for (JobType i : jobTypes) {
-			System.out.printf("JobType '%s' with tasks:%n", i.getJobTypeID());
-			for (Task j : i.getTasks()) {
-				System.out.printf("\tTask '%s' with size %f%n", j.getTaskID(), j.getTaskSize());
-			}
-		}
-	}
 
-	public static void main(String[] args) throws Exception{
-		if (args.length < 2) {
-			System.out.println("Usage:\n\tjava Main.java [workflow file path] [job file path]");
-			return;
-		}
-		readWorkFlowFile(args[0]);
-		printInfo();
-
-		readJobFile(args[1]);
-		for (Job i : jobs) {
-			System.out.println(i);
-		}
-
-		// The following codes have just been added 
-		while (true) { //This will change
-			executeTasksInAllStations();
-		}
-
-	}
-
-	// The following codes have just been added 
-	private static ArrayList<Station> allStations = new ArrayList<>();
 	
 	private static ArrayList<Station> findNewStations(TaskType taskType, ArrayList<Station> allStations) {
 		ArrayList<Station> suitableStations = new ArrayList<>();
@@ -208,6 +175,36 @@ public class Main {
 			for (Task completedTask : completedTasks) {
 				proceedAfterTaskCompletion(completedTask, allStations);
 			}
+		}
+	}
+	
+	public static void printInfo() {
+		for (TaskType i : TaskType.getAllTaskTypes()) {
+			System.out.printf("TaskType '%s' with default size %f%n", i.getTaskTypeName(), i.getDefaultTaskSize());
+		}
+		for (JobType i : jobTypes) {
+			System.out.printf("JobType '%s' with tasks:%n", i.getJobTypeID());
+			for (Task j : i.getTasks()) {
+				System.out.printf("\tTask '%s' with size %f%n", j.getTaskID(), j.getTaskSize());
+			}
+		}
+	}
+
+	public static void main(String[] args) throws Exception{
+		if (args.length < 2) {
+			System.out.println("Usage:\n\tjava Main.java [workflow file path] [job file path]");
+			return;
+		}
+		readWorkFlowFile(args[0]);
+		printInfo();
+
+		readJobFile(args[1]);
+		for (Job i : jobs) {
+			System.out.println(i);
+		}
+
+		while (true) { //This will change
+			executeTasksInAllStations();
 		}
 	}
 }
