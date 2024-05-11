@@ -6,7 +6,7 @@ public class Station {
     private double stationSpeed;
     private double stationSpeedPercentage;
     private ArrayList<Task> waitingTasks;
-    private ArrayList<String> handleTypes;
+    private ArrayList<Task> tasksInProgress;
     private boolean MULTIFLAG;
     private boolean FIFOFLAG;
     private boolean idle;
@@ -20,7 +20,7 @@ public class Station {
         this.FIFOFLAG = FIFOFLAG;
         this.idle = true;
         this.waitingTasks = new ArrayList<>();
-        this.handleTypes = new ArrayList<>();
+        this.tasksInProgress = new ArrayList<>();
     }
 
     public String getStationID() {
@@ -63,12 +63,12 @@ public class Station {
         this.waitingTasks = waitingTasks;
     }
 
-    public ArrayList<String> getHandleTypes() {
-        return handleTypes;
+    public ArrayList<Task> getTasksInProgress() {
+        return tasksInProgress;
     }
 
-    public void setHandleTypes(ArrayList<String> handleTypes) {
-        this.handleTypes = handleTypes;
+    public void setTasksInProgress(ArrayList<Task> tasksInProgress) {
+        this.tasksInProgress = tasksInProgress;
     }
 
     public boolean isMULTIFAG() {
@@ -95,29 +95,66 @@ public class Station {
         this.idle = idle;
     }
 
+    private void processTask(Task task) {
+        tasksInProgress.add(task);
+        idle = false; 
+        System.out.println("Task " + task.getTaskID() + " is processing at station.");
+    }
+
     public void addTask(Task task) {
-        waitingTasks.add(task);
-    }
+        // boolean taskAlreadyAdded = false;
+        if (task == null) {
+            System.out.println("Invalid task type.");
+            return;
+        }
 
-    // This can change after execute 
-    public void removeTask(Task task) {
-        waitingTasks.remove(task);
-    }
+        // if (taskAlreadyAdded) {
+        //     System.out.println("This task type already added.");
+        //     return;
+        // }
 
-    // TODO: Execute Tasks
+        if (idle || tasksInProgress.size() < maxCapacity) {
+            processTask(task);
+        } else {
+            waitingTasks.add(task);
+            System.out.println("Task " + task.getTaskID() + " added to waiting list at station.");
+        }
+    }
 
     public void executeTasks() {
         if (waitingTasks.isEmpty()) {
             idle = true;
             return;
         }
-        // TODO: while loop (index <= (?) waitingTasks.size())
+        for (int i = 0; i < tasksInProgress.size(); i++) {
+            Task task = tasksInProgress.get(i);
+            // task.reduceProcessingTime(); // Take from task
+            // if (task.getProcessingTime() <= 0) {
+            //     completeTask(task);
+            //     i--; 
+            // }
+        }
+        while (!waitingTasks.isEmpty() && tasksInProgress.size() < maxCapacity) {
+            Task nextTask = waitingTasks.remove(0); 
+            processTask(nextTask); 
+        }
     }
 
-    // TODO: Assign Tasks (public / private (?))
-    private void assignNextTask(Task task) {
-        // TODO: Decide how to choose the task (?) if random:
-        // int randomIndex = (int) (Math.random() * )
+    private double calculateExecutionTime(double taskSize) {
+        double actualSpeed = stationSpeed * (1 + (stationSpeedPercentage * (Math.random() * 2 - 1)));
+        return taskSize / actualSpeed;
+    }
+
+    public void removeTask(Task task) {
+        waitingTasks.remove(task);
+    }
+
+    public void completeTask(Task task) {
+        tasksInProgress.remove(task);
+        System.out.println("Task " + task.getTaskID() + " completed at station.");
+        if (tasksInProgress.isEmpty()) {
+            idle = true;
+        }
     }
 
 }
