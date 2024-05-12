@@ -1,10 +1,5 @@
 import java.util.ArrayList;
 public class TaskType {
-	public class MissingSizeException extends Exception {
-		public MissingSizeException() {
-			super("No size specified for the task nor the task type had a default size.");
-		}
-	}
 	private String taskTypeName;
 	private double defaultTaskSize;
 	private static ArrayList<TaskType> allTaskTypes = new ArrayList<>();
@@ -23,10 +18,6 @@ public class TaskType {
 	}
 	
 	public double getDefaultTaskSize() {
-		// Currently this makes it throw an exception regardless of *why* we're
-		// getting the defaultSize, (even if we just want to print it like I do in main)
-		// maybe fix it later?
-		//if (defaultTaskSize == -1.0) throw new MissingSizeException();
 		return defaultTaskSize;
 	}
 	

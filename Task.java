@@ -1,17 +1,28 @@
 public class Task {
+	public class MissingSizeException extends Exception {
+		public MissingSizeException() {
+			super("No size specified for the task nor the task type it has had a default size.");
+		}
+	}
+	
 	private String taskID;
 	private TaskType taskType;
 	private double taskSize;
-	private double processingTime; // New added
+	private double processingTime;
+	private boolean isCompleted;
 	
 	public Task(String taskID, TaskType taskType, double taskSize) {
 		this.taskID = taskID;
 		this.taskType = taskType;
 		this.taskSize = taskSize;
-		this.processingTime = calculateExecutionTime(taskSize, 0, 0); // New added
+		processingTime = calculateExecutionTime(taskSize, 0, 0);
+		isCompleted = false;
 	}
 	
-	public Task(String taskID, TaskType taskType) throws TaskType.MissingSizeException {
+	public Task(String taskID, TaskType taskType) throws MissingSizeException {
+		if (tasktype.getDefaultTaskSize() == -1.0)
+			throw new MissingSizeException();
+	
 		this(taskID, taskType, taskType.getDefaultTaskSize());
 	}
 
@@ -27,7 +38,6 @@ public class Task {
 		return taskSize;
 	}
 
-	// New added
 	public void reduceProcessingTime(double time) {
         processingTime -= time;
         if (processingTime < 0) {
@@ -39,4 +49,12 @@ public class Task {
         double actualSpeed = stationSpeed * (1 + (stationSpeedPercentage * (Math.random() * 2 - 1)));
         return taskSize / actualSpeed;
     }
+
+	public void completeTask {
+		isCompleted = true;
+	}
+	
+	public boolean isTaskCompleted {
+		return isCompleted;
+	}
 }
