@@ -98,6 +98,39 @@ public class Main {
 		}
 	}
 
+	public static void readStations(String wholeText) throws InvalidSyntaxException {
+		// It's easier to define the regexes in terms of each other.
+		// much easier to debug, too.
+		String boolRegex = "\\s*([YN])"; // Y or N
+		String numRegex = "\\s*(\\d+(\\.\\d+)?)"; // a (possibly floating point) number.
+		String wordRegex = "\\s*(\\w+)";
+		String taskRegex = wordRegex + numRegex + numRegex + "?"; 
+		String stationRegex = "\\(" + wordRegex + numRegex + "?" + boolRegex + boolRegex + "((" + taskRegex + ")+)" + "\\)";
+
+		String finalRegex = "\\(STATIONS((\\s*" + stationRegex + ")+)\\s*\\)";
+		
+		Matcher fm = Pattern.compile(finalRegex).matcher(wholeText);
+
+		if (!fm.find())
+			throw new InvalidSyntaxException("no valid Station list found in workflow file.");
+		
+		Matcher sm = Pattern.compile(stationRegex).matcher(fm.group(1));
+		while (sm.find()) {
+			Matcher tm = Pattern.compile(taskRegex).matcher(sm.group(5));
+			// ArrayList<TaskType> or smth.
+			// TODO: create new Stations that can process the given TaskTypes at the given speeds.
+			// apparently stations don't have their own inherent speed, but a seperate speed value
+			// for all TaskType's they can process. Station needs to be changed to accommodate this.
+			
+			while (tm.find()) {
+				// This is where we add the info to a list.
+			}
+			
+			//Station s = new Station(sm.group(1), sm.group(2), 0.0, 0.0, sm.group(3).equals("Y"), sm.group(4).equals("Y"));
+			//allStations.add(s);
+		}
+	}
+
 	public static void readWorkFlowFile(String fname) throws InvalidSyntaxException {
 		Scanner sc = null;
 		try {
