@@ -88,7 +88,7 @@ public class Main {
 						double parsed = Double.parseDouble(tsm.group(3));
 						jt.addTask(new Task(tsm.group(1), TaskType.getTaskTypeByID(tsm.group(1)), parsed));
 					}
-				} catch (TaskType.MissingSizeException e) {
+				} catch (Task.MissingSizeException e) {
 					System.out.println("Error for task " + tsm.group(1) + ": " + e.getMessage());
 				}
 			}

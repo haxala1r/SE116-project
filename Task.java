@@ -20,10 +20,9 @@ public class Task {
 	}
 	
 	public Task(String taskID, TaskType taskType) throws MissingSizeException {
-		if (tasktype.getDefaultTaskSize() == -1.0)
-			throw new MissingSizeException();
-	
 		this(taskID, taskType, taskType.getDefaultTaskSize());
+		if (taskType.getDefaultTaskSize() == -1.0)
+			throw new MissingSizeException();
 	}
 
 	public String getTaskID() {
@@ -50,11 +49,11 @@ public class Task {
         return taskSize / actualSpeed;
     }
 
-	public void completeTask {
+	public void completeTask() {
 		isCompleted = true;
 	}
 	
-	public boolean isTaskCompleted {
+	public boolean isTaskCompleted() {
 		return isCompleted;
 	}
 }
