@@ -1,13 +1,17 @@
 public class EventQueue {
-	public static double currentTime = 0;
-	public ArrayList<Event> events;
+	private static double currentTime = 0;
+	private ArrayList<Event> events;
 	
 	public EventQueue() {
-		events = new ArrayList<Event>;
+		events = new ArrayList<Event>();
 	}
 	
 	public void addEvent(Event event) {
 		events.add(event);
+	}
+	
+	public double getCurrentTime() {
+		return currentTime;
 	}
 }
 	
