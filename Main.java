@@ -237,7 +237,7 @@ public class Main {
 		}
 
 		while (true) { //This will change
-			executeTasksInAllStations();
+			
 		}
 	}
 }
