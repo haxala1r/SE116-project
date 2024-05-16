@@ -3,19 +3,17 @@ import java.util.ArrayList;
 public class Station {
     private String stationID;
     private int maxCapacity;
-    private double stationSpeed;
-    private double stationSpeedPercentage;
+	private ArrayList<ProcessingSpeed> processingSpeeds;
     private ArrayList<Task> waitingTasks;
     private ArrayList<Task> tasksInProgress;
     private boolean MULTIFLAG;
     private boolean FIFOFLAG;
     private boolean idle;
 
-    public Station(String stationID, int maxCapacity, double stationSpeed, double stationSpeedPercentage, boolean MULTIFLAG, boolean FIFOFLAG) {
+    public Station(String stationID, int maxCapacity, ArrayList<ProcessingSpeed> pss, boolean MULTIFLAG, boolean FIFOFLAG) {
         this.stationID = stationID;
         this.maxCapacity = maxCapacity;
-        this.stationSpeed = stationSpeed;
-        this.stationSpeedPercentage = stationSpeedPercentage;
+		processingSpeeds = pss;
         this.MULTIFLAG = MULTIFLAG;
         this.FIFOFLAG = FIFOFLAG;
         this.idle = true;
@@ -37,22 +35,6 @@ public class Station {
 
     public void setMaxCapacity(int maxCapacity) {
         this.maxCapacity = maxCapacity;
-    }
-
-    public double getStationSpeed() {
-        return stationSpeed;
-    }
-
-    public void setStationSpeed(double stationSpeed){
-        this.stationSpeed = stationSpeed;
-    }
-
-    public double getStationSpeedPercentage() {
-        return stationSpeedPercentage;
-    }
-
-    public void setStationSpeedPercentage(double stationSpeedPercentage) {
-        this.stationSpeedPercentage = stationSpeedPercentage;
     }
 
     public ArrayList<Task> getWaitingTasks() {
@@ -102,10 +84,16 @@ public class Station {
     }
 
     public void addTask(Task task) {
+        // boolean taskAlreadyAdded = false;
         if (task == null) {
             System.out.println("Invalid task type.");
             return;
         }
+
+        // if (taskAlreadyAdded) {
+        //     System.out.println("This task type already added.");
+        //     return;
+        // }
 
         if (idle || tasksInProgress.size() < maxCapacity) {
             processTask(task);
@@ -120,18 +108,24 @@ public class Station {
             idle = true;
             return;
         }
-        for (Task task : tasksInProgress) {
-            task.reduceProcessingTime(stationSpeed);
+        for (int i = 0; i < tasksInProgress.size(); i++) {
+            Task task = tasksInProgress.get(i);
+            // task.reduceProcessingTime(); // Take from task
+            // if (task.getProcessingTime() <= 0) {
+            //     completeTask(task);
+            //     i--; 
+            // }
         }
-        tasksInProgress.removeIf(Task::isTaskCompleted);
         while (!waitingTasks.isEmpty() && tasksInProgress.size() < maxCapacity) {
-            Task nextTask = waitingTasks.remove(0);
-            processTask(nextTask);
-        }
-        if (tasksInProgress.isEmpty() && waitingTasks.isEmpty()) {
-            idle = true;
+            Task nextTask = waitingTasks.remove(0); 
+            processTask(nextTask); 
         }
     }
+
+    // private double calculateExecutionTime(double taskSize) {
+    //     double actualSpeed = stationSpeed * (1 + (stationSpeedPercentage * (Math.random() * 2 - 1)));
+    //     return taskSize / actualSpeed;
+    // }
 
     public void removeTask(Task task) {
         waitingTasks.remove(task);
@@ -148,9 +142,9 @@ public class Station {
     public ArrayList<Task> getCompletedTasks() {
         ArrayList<Task> completedTasks = new ArrayList<>();
         for (Task task : tasksInProgress) {
-            if (task.isTaskCompleted()) { 
+            /*if (task.isCompleted()) { // it will add to Task class
                 completedTasks.add(task);
-            }
+            }*/
         }
         return completedTasks;
     }

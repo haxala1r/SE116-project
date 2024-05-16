@@ -115,14 +115,12 @@ public class Main {
 			throw new InvalidSyntaxException("no valid Station list found in workflow file.");
 		
 		Matcher sm = Pattern.compile(stationRegex).matcher(fm.group(1));
+		// loop over each station
 		while (sm.find()) {
-			System.out.println(sm.group(6));
 			Matcher tm = Pattern.compile(taskRegex).matcher(sm.group(6));
 			ArrayList<ProcessingSpeed> pss = new ArrayList<>();
-			// TODO: create new Stations that can process the given TaskTypes at the given speeds.
-			// apparently stations don't have their own inherent speed, but a seperate speed value
-			// for all TaskType's they can process. Station needs to be changed to accommodate this.
 			
+			// Add all TaskTypes and their processing speeds into an ArrayList
 			while (tm.find()) {
 				TaskType tt = TaskType.getTaskTypeByID(tm.group(1));
 				double s = Double.parseDouble(tm.group(2));
@@ -131,11 +129,12 @@ public class Main {
 					deviation = Double.parseDouble(tm.group(4));
 				}
 				pss.add(new ProcessingSpeed(tt, s, deviation));
-				System.out.println(tt + " " + s + " " + deviation + ";");
 			}
 			
-			//Station s = new Station(sm.group(1), sm.group(2), pss, sm.group(4).equals("Y"), sm.group(5).equals("Y"));
-			//allStations.add(s);
+			// Pass all the necessary info to Station
+			int cap = Integer.parseInt(sm.group(2));
+			Station s = new Station(sm.group(1), cap, pss, sm.group(4).equals("Y"), sm.group(5).equals("Y"));
+			allStations.add(s);
 		}
 	}
 
