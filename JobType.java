@@ -4,10 +4,12 @@ import java.util.List;
 public class JobType{
    private String jobTypeID;
     private List<Task> tasks;
+    private static ArrayList<JobType> allJobTypes = new ArrayList<>();
 
     public JobType(String jobTypeID) {
         this.jobTypeID = jobTypeID;
         this.tasks = new ArrayList<>();
+        allJobTypes.add(this);
     }
    public void addTask(Task task) {
         tasks.add(task);
@@ -23,5 +25,9 @@ public class JobType{
     }
    public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    public static ArrayList<JobType> getAllJobTypes() {
+        return allJobTypes;
     }
 }
