@@ -42,6 +42,9 @@ public class Task {
         if (processingTime < 0) {
             processingTime = 0; 
         }
+        if (processingTime == 0) {
+            completeTask();
+        }
     }
 
 	private double calculateExecutionTime(double taskSize, double stationSpeed, double stationSpeedPercentage) {

@@ -102,16 +102,10 @@ public class Station {
     }
 
     public void addTask(Task task) {
-        // boolean taskAlreadyAdded = false;
         if (task == null) {
             System.out.println("Invalid task type.");
             return;
         }
-
-        // if (taskAlreadyAdded) {
-        //     System.out.println("This task type already added.");
-        //     return;
-        // }
 
         if (idle || tasksInProgress.size() < maxCapacity) {
             processTask(task);
@@ -126,24 +120,18 @@ public class Station {
             idle = true;
             return;
         }
-        for (int i = 0; i < tasksInProgress.size(); i++) {
-            Task task = tasksInProgress.get(i);
-            // task.reduceProcessingTime(); // Take from task
-            // if (task.getProcessingTime() <= 0) {
-            //     completeTask(task);
-            //     i--; 
-            // }
+        for (Task task : tasksInProgress) {
+            task.reduceProcessingTime(stationSpeed);
         }
+        tasksInProgress.removeIf(Task::isTaskCompleted);
         while (!waitingTasks.isEmpty() && tasksInProgress.size() < maxCapacity) {
-            Task nextTask = waitingTasks.remove(0); 
-            processTask(nextTask); 
+            Task nextTask = waitingTasks.remove(0);
+            processTask(nextTask);
+        }
+        if (tasksInProgress.isEmpty() && waitingTasks.isEmpty()) {
+            idle = true;
         }
     }
-
-    // private double calculateExecutionTime(double taskSize) {
-    //     double actualSpeed = stationSpeed * (1 + (stationSpeedPercentage * (Math.random() * 2 - 1)));
-    //     return taskSize / actualSpeed;
-    // }
 
     public void removeTask(Task task) {
         waitingTasks.remove(task);
@@ -160,9 +148,9 @@ public class Station {
     public ArrayList<Task> getCompletedTasks() {
         ArrayList<Task> completedTasks = new ArrayList<>();
         for (Task task : tasksInProgress) {
-            /*if (task.isCompleted()) { // it will add to Task class
+            if (task.isTaskCompleted()) { 
                 completedTasks.add(task);
-            }*/
+            }
         }
         return completedTasks;
     }
