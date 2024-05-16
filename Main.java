@@ -187,7 +187,7 @@ public class Main {
 				suitableStations.add(station);
         	}
     	}
-    return suitableStations;
+		return suitableStations;
 	}
 
 	private static Station selectStation(ArrayList<Station> suitableStations) {
@@ -218,7 +218,7 @@ public class Main {
 			}
 		}
 	}
-	
+
 	public static void printInfo() {
 		for (TaskType i : TaskType.getAllTaskTypes()) {
 			System.out.printf("TaskType '%s' with default size %f%n", i.getTaskTypeName(), i.getDefaultTaskSize());
