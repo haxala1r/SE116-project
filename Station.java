@@ -128,7 +128,7 @@ public class Station {
         return null;
     }
 
-	public bool canHandleTaskType(TaskType tt) {
+	public boolean canHandleTaskType(TaskType taskType) {
 		for (ProcessingSpeed speed : processingSpeeds) {
 			if (speed.getTaskType().equals(taskType))
 				return true;
@@ -136,6 +136,29 @@ public class Station {
 		return false;
 	}
 
+    public Event nextEvent(EventQueue eventQueue) {
+        if (tasksInProgress.isEmpty() && waitingTasks.isEmpty()) {
+            return new Event("No tasks in progress or waiting.", eventQueue.getCurrentTime());
+        }
+
+        Task nextTask = null;
+        double minRemainingTime = Double.MAX_VALUE;
+
+        // THIS CODE WILL CHANGE
+        for (Task task : tasksInProgress) {
+            double remainingTime = task.calculateExecutionTime();
+            if (remainingTime < minRemainingTime) {
+                minRemainingTime = remainingTime;
+                nextTask = task;
+            }
+        }
+
+        if (nextTask != null) {
+            return new Event("Task " + nextTask.getTaskID() + " will complete.", eventQueue.getCurrentTime() + minRemainingTime);
+        } else {
+            return new Event("No task in progress.", eventQueue.getCurrentTime());
+        }
+    }
 
     public void removeTask(Task task) {
         waitingTasks.remove(task);

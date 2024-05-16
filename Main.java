@@ -183,9 +183,9 @@ public class Main {
 	private static ArrayList<Station> findNewStations(TaskType taskType, ArrayList<Station> allStations) {
 		ArrayList<Station> suitableStations = new ArrayList<>();
     	for (Station station : allStations) {
-			if (station.canHandleTaskType(taskType)) {
-				suitableStations.add(station);
-        	}
+        	// if (station.canHandleTaskType(taskType)) {
+        	//     suitableStations.add(station);
+        	// }
     	}
     return suitableStations;
 	}
@@ -206,7 +206,11 @@ public class Main {
 
 	private static void executeTasksInAllStations() {
 		for (Station station : allStations) {
-			station.executeTasks();
+			try {
+				executeTasksInAllStations();
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
 		}
 	}
 
