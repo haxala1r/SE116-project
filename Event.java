@@ -1,15 +1,15 @@
 public class Event {
-	private String msg;
-	private double time;
-	public Event(String msg, double time) {
-		this.msg = msg;
-		this.time = time;
+	private String message;
+	private double startTime;
+	public Event(String message, double startTime) {
+		this.message = message;
+		this.startTime = startTime;
 	}
 
-	public double getTime() {
-		return time;
+	public double getStartTime() {
+		return startTime;
 	}
-	public String getMsg() {
-		return msg;
+	public String getMessage() {
+		return message;
 	}
 }
