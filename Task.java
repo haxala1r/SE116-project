@@ -47,7 +47,7 @@ public class Task {
         }
     }
 
-	private double calculateExecutionTime(double taskSize, double stationSpeed, double stationSpeedPercentage) {
+	public double calculateExecutionTime(double taskSize, double stationSpeed, double stationSpeedPercentage) {
         double actualSpeed = stationSpeed * (1 + (stationSpeedPercentage * (Math.random() * 2 - 1)));
         return taskSize / actualSpeed;
     }
