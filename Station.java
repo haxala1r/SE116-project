@@ -97,14 +97,14 @@ public class Station {
         }
     }
 
-    public void executeTasks() {
+    public void executeTasks() throws Exception {
         for (Task task : tasksInProgress) {
             ProcessingSpeed speed = getProcessingSpeed(task);
             if (speed != null) {
                 double stationSpeed = speed.getSpeed();
                 task.reduceProcessingTime(stationSpeed);
             } else {
-                System.out.println("Processing speed not found for this task: " + task.getTaskID());
+                throw new Exception("Processing speed not found for this task: " + task.getTaskID());
             }
         }
         tasksInProgress.removeIf(Task::isTaskCompleted);
@@ -125,7 +125,6 @@ public class Station {
                 return speed;
             }
         }
-
         return null;
     }
 
