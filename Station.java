@@ -99,19 +99,34 @@ public class Station {
 
     public void executeTasks() {
         for (Task task : tasksInProgress) {
-            task.reduceProcessingTime(stationSpeed); // Error
+            ProcessingSpeed speed = getProcessingSpeed(task);
+            if (speed != null) {
+                double stationSpeed = speed.getSpeed();
+                task.reduceProcessingTime(stationSpeed);
+            } else {
+                System.out.println("Processing speed not found for this task: " + task.getTaskID());
+            }
         }
-
         tasksInProgress.removeIf(Task::isTaskCompleted);
-
         while (!waitingTasks.isEmpty() && tasksInProgress.size() < maxCapacity) {
             Task nextTask = waitingTasks.remove(0);
             processTask(nextTask);
         }
-
         if (tasksInProgress.isEmpty() && waitingTasks.isEmpty()) {
             idle = true;
         }
+    }
+
+    public ProcessingSpeed getProcessingSpeed(Task task) {
+        TaskType taskType = task.getTaskType();
+    
+        for (ProcessingSpeed speed : processingSpeeds) {
+            if (speed.getTaskType().equals(taskType)) {
+                return speed;
+            }
+        }
+
+        return null;
     }
 
     public void removeTask(Task task) {
