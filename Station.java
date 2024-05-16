@@ -128,6 +128,15 @@ public class Station {
         return null;
     }
 
+	public bool canHandleTaskType(TaskType tt) {
+		for (ProcessingSpeed speed : processingSpeeds) {
+			if (speed.getTaskType().equals(taskType))
+				return true;
+		}
+		return false;
+	}
+
+
     public void removeTask(Task task) {
         waitingTasks.remove(task);
     }
