@@ -116,17 +116,25 @@ public class Main {
 		
 		Matcher sm = Pattern.compile(stationRegex).matcher(fm.group(1));
 		while (sm.find()) {
-			Matcher tm = Pattern.compile(taskRegex).matcher(sm.group(5));
-			// ArrayList<TaskType> or smth.
+			System.out.println(sm.group(6));
+			Matcher tm = Pattern.compile(taskRegex).matcher(sm.group(6));
+			ArrayList<ProcessingSpeed> pss = new ArrayList<>();
 			// TODO: create new Stations that can process the given TaskTypes at the given speeds.
 			// apparently stations don't have their own inherent speed, but a seperate speed value
 			// for all TaskType's they can process. Station needs to be changed to accommodate this.
 			
 			while (tm.find()) {
-				// This is where we add the info to a list.
+				TaskType tt = TaskType.getTaskTypeByID(tm.group(1));
+				double s = Double.parseDouble(tm.group(2));
+				double deviation = 0.0;
+				if (tm.group(4) != null) {
+					deviation = Double.parseDouble(tm.group(4));
+				}
+				pss.add(new ProcessingSpeed(tt, s, deviation));
+				System.out.println(tt + " " + s + " " + deviation + ";");
 			}
 			
-			//Station s = new Station(sm.group(1), sm.group(2), 0.0, 0.0, sm.group(3).equals("Y"), sm.group(4).equals("Y"));
+			//Station s = new Station(sm.group(1), sm.group(2), pss, sm.group(4).equals("Y"), sm.group(5).equals("Y"));
 			//allStations.add(s);
 		}
 	}
@@ -146,6 +154,7 @@ public class Main {
 		
 		readTaskTypes(wholeText);
 		readJobTypes(wholeText);
+		readStations(wholeText);
 	}
 
 	public static ArrayList<Job> jobs;
