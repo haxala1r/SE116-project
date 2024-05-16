@@ -15,7 +15,7 @@ public class Task {
 		this.taskID = taskID;
 		this.taskType = taskType;
 		this.taskSize = taskSize;
-		processingTime = calculateExecutionTime(taskSize, 0, 0);
+		processingTime = calculateExecutionTime(taskSize, 1.0, 0.0);
 		isCompleted = false;
 	}
 	
