@@ -1,61 +1,96 @@
+import java.util.ArrayList;
 public class EventQueue {
 	private static double currentTime = 0;
-	private static ArrayList<Job> activeJobs;
-	private static ArrayList<Job> waitingJobs;
-	private static ArrayList<Station> stations;
-	private ArrayList<Event> events = new ArrayList<>();
+	private static ArrayList<Job> waitingJobs = new ArrayList<>();
+	private static ArrayList<Job> activeJobs = new ArrayList<>();
+	private static ArrayList<Station> stations = new ArrayList<>();
+	private static ArrayList<Event> events = new ArrayList<>();
 	
-	public void addJob(Job j) {
+	public static void addJob(Job j) {
 		waitingJobs.add(j);
 	}
 
-	public void addEvent(Event event) {
+	public static void addEvent(Event event) {
 		events.add(event);
 	}
+
+	public static void addStation(Station s) {
+		stations.add(s);
+	}
 	
-	public double getCurrentTime() {
+	public static double getCurrentTime() {
 		return currentTime;
 	}
 	
-	private static Event nextEvent() {
+	private static void executeAllJobs() {
+		for (Job j : activeJobs) {
+			for (Task t : j.getTasks()) {
+				// try to find a station that can execute this task.
+				if (t.isTaskCompleted() || t.isBeingProcessed())
+					continue;
+				for (Station s : stations) {
+					if (s.canHandleTaskType(t.getTaskType())) {
+						s.addTask(t);
+					}
+				}
+			}
+		}
+	}
+
+	private static boolean nextEvent() {
+		executeAllJobs();
 		double earliest = Double.MAX_VALUE;
 		Job startingJob = null;
 		Station station = null;
-		Event e = null;
 		
 		// Check all stations for new events.
-		for (Station s : allStations) {
-			double t = s.timeUntilNextEvent();
-			if (t <= earliest) {
-				earliest = t;
+		for (Station s : stations) {
+			Event e = s.nextEvent();
+			if (e != null && e.getStartTime() <= earliest) {
+				earliest = e.getStartTime();
 				station = s;
 			}
 		}
 
 		// Check all jobs for any jobs that need to start soon.
-		for (Job j : activeJobs) {
-			double t = (j.getStartTime() - current);
+		for (Job j : waitingJobs) {
+			double t = j.getStartTime();
 			if (t <= earliest) {
 				earliest = t;
 				startingJob = j;
 				station = null;
 			}
 		}
+
 		
 		if (station == null && startingJob == null) {
 			/* No event has actually happened, no events left. */
-			return new Event("All Tasks and Jobs finished.");
+			addEvent(new Event("All Tasks and Jobs finished.", currentTime));
+			return false;
 		}
 		
-		if (station != null) {
-			// TODO: Pass time in all stations
-		} else {
+		double old = currentTime;
+		currentTime = earliest;
+		for (Station s : stations) {
+			s.passTime(earliest - old);
+		}
+		if (startingJob != null) {
 			// a job must start now.
+			addEvent(new Event("Job " + startingJob.getJobID() + " has started.", earliest));
 			waitingJobs.remove(startingJob);
 			activeJobs.add(startingJob);
 		}
 
-		currentTime += earliest;
+		return true;
+	}
+
+	public static void fill() {
+		while (nextEvent()) {
+		
+		}
+		for (Event e : events) {
+			System.out.println("[Time " + e.getStartTime() + "] " + e.getMessage());
+		}
 	}
 }
 	

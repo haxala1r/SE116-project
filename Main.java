@@ -134,7 +134,7 @@ public class Main {
 			// Pass all the necessary info to Station
 			int cap = Integer.parseInt(sm.group(2));
 			Station s = new Station(sm.group(1), cap, pss, sm.group(4).equals("Y"), sm.group(5).equals("Y"));
-			allStations.add(s);
+			EventQueue.addStation(s);
 		}
 	}
 
@@ -156,9 +156,7 @@ public class Main {
 		readStations(wholeText);
 	}
 
-	public static ArrayList<Job> jobs;
 	public static void readJobFile(String fname) throws Exception {
-		jobs = new ArrayList<>();
 		Scanner sc = new Scanner(Paths.get(fname));
 		Pattern p = Pattern.compile("(\\w+)\\s+(\\w+)\\s+(\\d+)\\s+(\\d+)");
 		
@@ -173,7 +171,8 @@ public class Main {
 				continue; // still continue though, so we can report all errors at once.
 			}
 			
-			jobs.add(new Job(m.group(1), new JobType(m.group(2)), Integer.parseInt(m.group(3)), Integer.parseInt(m.group(4))));
+			Job j = new Job(m.group(1), JobType.getJobTypeByID(m.group(2)), Integer.parseInt(m.group(3)), Integer.parseInt(m.group(4)));
+			EventQueue.addJob(j);
 		}
 		if (hadError)
 			throw new Exception("Stopped execution because Job file contains error(s).");
@@ -244,12 +243,7 @@ public class Main {
 		printInfo();
 
 		readJobFile(args[1]);
-		for (Job i : jobs) {
-			System.out.println(i);
-		}
-
-		while (true) { //This will change
-			executeTasksInAllStations();
-		}
+		
+		EventQueue.fill();
 	}
 }

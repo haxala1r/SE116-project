@@ -78,9 +78,15 @@ public class Station {
     }
 
     private void processTask(Task task) {
-        tasksInProgress.add(task);
-        idle = false; 
-        System.out.println("Task " + task.getTaskID() + " is processing at station.");
+		if (tasksInProgress.size() >= maxCapacity)
+			return;
+		ProcessingSpeed speed = getProcessingSpeed(task);
+		task.recalculateExecutionTime(speed.getSpeed(), speed.getDeviation());
+		tasksInProgress.add(task);
+        idle = false;
+		
+		Event e = new Event("Station " + stationID + " has begun processing Task " + task.getTaskID(), EventQueue.getCurrentTime());
+		EventQueue.addEvent(e);
     }
 
     public void addTask(Task task) {
@@ -97,6 +103,12 @@ public class Station {
         }
     }
 
+	private void reallocateCapacity() {
+		while (!waitingTasks.isEmpty() && tasksInProgress.size() < maxCapacity) {
+			processTask(waitingTasks.remove(0));
+		}
+	}
+
     public void executeTasks() throws Exception {
         for (Task task : tasksInProgress) {
             ProcessingSpeed speed = getProcessingSpeed(task);
@@ -108,11 +120,8 @@ public class Station {
             }
         }
         tasksInProgress.removeIf(Task::isTaskCompleted);
-        while (!waitingTasks.isEmpty() && tasksInProgress.size() < maxCapacity) {
-            Task nextTask = waitingTasks.remove(0);
-            processTask(nextTask);
-        }
-        if (tasksInProgress.isEmpty() && waitingTasks.isEmpty()) {
+        reallocateCapacity();
+		if (tasksInProgress.isEmpty() && waitingTasks.isEmpty()) {
             idle = true;
         }
     }
@@ -130,15 +139,15 @@ public class Station {
 
 	public boolean canHandleTaskType(TaskType taskType) {
 		for (ProcessingSpeed speed : processingSpeeds) {
-			if (speed.getTaskType().equals(taskType))
+			if (speed.getTaskType().getTaskTypeName().equals(taskType.getTaskTypeName()))
 				return true;
 		}
 		return false;
 	}
 
-    public Event nextEvent(EventQueue eventQueue) {
+    public Event nextEvent() {
         if (tasksInProgress.isEmpty() && waitingTasks.isEmpty()) {
-            return new Event("No tasks in progress or waiting.", eventQueue.getCurrentTime());
+            return null; // return null as a way of saying there's no Event at all
         }
 
         Task nextTask = null;
@@ -146,7 +155,7 @@ public class Station {
 
         // THIS CODE WILL CHANGE
         for (Task task : tasksInProgress) {
-            double remainingTime = task.calculateExecutionTime();
+            double remainingTime = task.getTimeLeft();
             if (remainingTime < minRemainingTime) {
                 minRemainingTime = remainingTime;
                 nextTask = task;
@@ -154,11 +163,27 @@ public class Station {
         }
 
         if (nextTask != null) {
-            return new Event("Task " + nextTask.getTaskID() + " will complete.", eventQueue.getCurrentTime() + minRemainingTime);
+            return new Event("Task " + nextTask.getTaskID() + " will complete.", EventQueue.getCurrentTime() + minRemainingTime);
         } else {
-            return new Event("No task in progress.", eventQueue.getCurrentTime());
+            return null;
         }
     }
+	public void passTime(double time) {
+		// tasksInProgress holds tasks that are actually being executed, so
+		// time passing will affect all of them at once. waitingTasks are unaffected.
+		ArrayList<Task> completed = new ArrayList<>(); 
+		// completed is necessary, because we can't modify tasksInProgress in-loop
+		for (Task task : tasksInProgress) {
+			task.reduceProcessingTime(time);
+			if (task.isTaskCompleted()) {
+				completed.add(task);
+			}
+		}
+		for (Task task : completed) {
+			completeTask(task);
+		}
+		reallocateCapacity();
+	}
 
     public void removeTask(Task task) {
         waitingTasks.remove(task);
@@ -166,10 +191,9 @@ public class Station {
 
     public void completeTask(Task task) {
         tasksInProgress.remove(task);
-        System.out.println("Task " + task.getTaskID() + " completed at station.");
-        if (tasksInProgress.isEmpty()) {
+        EventQueue.addEvent(new Event("Station " + stationID + " completed Task " + task.getTaskID(), EventQueue.getCurrentTime()));
+        if (tasksInProgress.isEmpty())
             idle = true;
-        }
     }
 
     public ArrayList<Task> getCompletedTasks() {

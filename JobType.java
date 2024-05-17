@@ -3,7 +3,7 @@ import java.util.List;
 
 public class JobType{
    private String jobTypeID;
-    private List<Task> tasks;
+    private ArrayList<Task> tasks;
     private static ArrayList<JobType> allJobTypes = new ArrayList<>();
 
     public JobType(String jobTypeID) {
@@ -12,6 +12,7 @@ public class JobType{
         allJobTypes.add(this);
     }
    public void addTask(Task task) {
+	   System.out.println("huuu");
         tasks.add(task);
     }
   public String getJobTypeID() {
@@ -20,13 +21,20 @@ public class JobType{
   public void setJobTypeID(String jobTypeID) {
         this.jobTypeID = jobTypeID;
     }
-   public List<Task> getTasks() {
+   public ArrayList<Task> getTasks() {
         return tasks;
     }
-   public void setTasks(List<Task> tasks) {
+   public void setTasks(ArrayList<Task> tasks) {
         this.tasks = tasks;
     }
-
+	
+   public static JobType getJobTypeByID(String s) {
+		for (JobType i : allJobTypes) {
+			if (i.getJobTypeID().equals(s))
+				return i;
+		}
+		return null;
+   }
     public static ArrayList<JobType> getAllJobTypes() {
         return allJobTypes;
     }
