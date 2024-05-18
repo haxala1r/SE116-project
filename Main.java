@@ -228,16 +228,16 @@ public class Main {
             double totalTime = getCurrentTime(); 
             double busyTime = totalTime - station.getIdleTime(); 
             double utilization = (busyTime / totalTime) * 100; 
-            System.out.println("Station " + station.getStationID() + " Utilization: " + utilization + "%"); // Değişebilir
+            System.out.println("Station " + station.getStationID() + " Utilization: " + utilization + "%"); 
         }
     }
 
 	public static void reportJobTardiness() {
         double totalTardiness = 0;
         int lateJobCount = 0;
-        for (Job j : activeJobs) {
-            double actualEndTime = j.getActualEndTime();
-            double deadline = j.getStartTime() + j.getDuration();
+        for (Job job : activeJobs) {
+            double actualEndTime = job.getActualEndTime();
+            double deadline = job.getStartTime() + job.getDuration();
             if (actualEndTime > deadline) {
                 double tardiness = actualEndTime - deadline;
                 totalTardiness += tardiness;
@@ -247,9 +247,9 @@ public class Main {
         }
         if (lateJobCount > 0) {
             double averageTardiness = totalTardiness / lateJobCount;
-            System.out.println("Job tardiness printlenir");
+            System.out.println("Avarage job tardiness: "+averageTardiness);
         } else {
-            System.out.println("No  jobs found.");
+            System.out.println("Late jobs could not found.");
         }
     }
 
