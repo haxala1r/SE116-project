@@ -99,13 +99,12 @@ public class Station {
             processTask(task);
         } else {
             waitingTasks.add(task);
-            System.out.println("Task " + task.getTaskID() + " added to waiting list at station.");
         }
     }
 
 	private void reallocateCapacity() {
 		while (!waitingTasks.isEmpty() && tasksInProgress.size() < maxCapacity) {
-			processTask(waitingTasks.remove(0));
+			processTask(waitingTasks.remove(0)); // TODO: allow for different scheduling systems
 		}
 	}
 
@@ -152,8 +151,25 @@ public class Station {
 
         Task nextTask = null;
         double minRemainingTime = Double.MAX_VALUE;
+		
+		/* Check if any tasks are already finished 
+		 * Sometimes doubles just aren't precise enough, such as when a station's speed is 7
+		 * but task size is 3. In these cases, the time left can be a double that is bigger than
+		 * zero, but practically so close to zero that doubles aren't precise enough to count that
+		 * time properly. To prevent these cases, we pretend any task that has a small enough time left
+		 * is completed.
+		 */
+		ArrayList<Task> completed = new ArrayList<>();
+		for (Task task : tasksInProgress) {
+			if (task.getTimeLeft() <= 0.000001) {
+				completed.add(task);
+			}
+		}
+		for (Task task : completed) {
+			completeTask(task);
+		}
 
-        // THIS CODE WILL CHANGE
+		/* Check the remaining tasks for the earliest finishing one */
         for (Task task : tasksInProgress) {
             double remainingTime = task.getTimeLeft();
             if (remainingTime < minRemainingTime) {
@@ -161,7 +177,7 @@ public class Station {
                 nextTask = task;
             }
         }
-
+		
         if (nextTask != null) {
             return new Event("Task " + nextTask.getTaskID() + " will complete.", EventQueue.getCurrentTime() + minRemainingTime);
         } else {

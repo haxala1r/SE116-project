@@ -11,8 +11,6 @@ public class Main {
 			super(message);
 		}
 	}
-	private static ArrayList<Station> allStations = new ArrayList<>();
-	private static ArrayList<JobType> jobTypes = new ArrayList<>();
 
 	private static void readTaskTypes(String wholeStr) throws InvalidSyntaxException {
 		// we take the whole file as input, then figure out where the task types are.
@@ -92,9 +90,6 @@ public class Main {
 					System.out.println("Error for task " + tsm.group(1) + ": " + e.getMessage());
 				}
 			}
-			// TODO: reorganize all jobtypes list, and also check if a TaskType or JobType has
-			// been defined before. throw if yes.
-			jobTypes.add(jt);
 		}
 	}
 
@@ -222,7 +217,8 @@ public class Main {
 		}
 	}
 	*/
-
+	
+	
 	public static void reportStationUtilization() {
         for (Station station : EventQueue.stations) {
             double totalTime = EventQueue.getCurrentTime(); 
@@ -257,12 +253,12 @@ public class Main {
 		for (TaskType i : TaskType.getAllTaskTypes()) {
 			System.out.printf("TaskType '%s' with default size %f%n", i.getTaskTypeName(), i.getDefaultTaskSize());
 		}
-		for (JobType i : jobTypes) {
+		/*for (JobType i : jobTypes) {
 			System.out.printf("JobType '%s' with tasks:%n", i.getJobTypeID());
 			for (Task j : i.getTasks()) {
 				System.out.printf("\tTask '%s' with size %f%n", j.getTaskID(), j.getTaskSize());
 			}
-		}
+		}*/
 	}
 
 	public static void main(String[] args) throws Exception{
