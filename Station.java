@@ -108,7 +108,6 @@ public class Station {
 	private ArrayList<Task> getAllowedTasks() {
 		// Searches waitingTasks for tasks we are allowed to process.
 		// This is necessary to handle MULTIFLAG.
-		System.out.println(MULTIFLAG);
 		if (MULTIFLAG)
 			return waitingTasks;
 		if (idle)

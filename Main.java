@@ -52,7 +52,7 @@ public class Main {
 		}
 	}
 	
-	public static void readJobTypes(String wholeStr) throws InvalidSyntaxException {
+	public static void readJobTypes(String wholeStr) throws InvalidSyntaxException, Task.MissingSizeException {
 		// Task type and size regex. Task Type ID followed optionally by a size.
 		String tsRegex = "\\s*(\\w+)(\\s+(\\d+(\\.\\d+)?))?\\s*";
 		Pattern tsPattern = Pattern.compile(tsRegex);
@@ -78,16 +78,12 @@ public class Main {
 				throw new InvalidSyntaxException("'" + jobtypeName + "' is not a valid job type name.");
 			JobType jt = new JobType(jobtypeName);
 			while (tsm.find()) {
-				try {
-					if (tsm.group(3) == null) {
-						// task size wasn't specified.
-						jt.addTask(new Task(tsm.group(1), TaskType.getTaskTypeByID(tsm.group(1))));
-					} else {
-						double parsed = Double.parseDouble(tsm.group(3));
-						jt.addTask(new Task(tsm.group(1), TaskType.getTaskTypeByID(tsm.group(1)), parsed));
-					}
-				} catch (Task.MissingSizeException e) {
-					System.out.println("Error for task " + tsm.group(1) + ": " + e.getMessage());
+				if (tsm.group(3) == null) {
+					// task size wasn't specified.
+					jt.addTask(new Task(tsm.group(1), TaskType.getTaskTypeByID(tsm.group(1))));
+				} else {
+					double parsed = Double.parseDouble(tsm.group(3));
+					jt.addTask(new Task(tsm.group(1), TaskType.getTaskTypeByID(tsm.group(1)), parsed));
 				}
 			}
 		}
@@ -133,7 +129,7 @@ public class Main {
 		}
 	}
 
-	public static void readWorkFlowFile(String fname) throws InvalidSyntaxException {
+	public static void readWorkFlowFile(String fname) throws InvalidSyntaxException, Task.MissingSizeException {
 		Scanner sc = null;
 		try {
 			sc = new Scanner(Paths.get(fname));

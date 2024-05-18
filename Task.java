@@ -24,7 +24,7 @@ public class Task {
 	
 	public Task(String taskID, TaskType taskType) throws MissingSizeException {
 		this(taskID, taskType, taskType.getDefaultTaskSize());
-		if (taskType.getDefaultTaskSize() == -1.0)
+		if (!taskType.hasDefaultSize())
 			throw new MissingSizeException();
 	}
 
