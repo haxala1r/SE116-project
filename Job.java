@@ -18,7 +18,7 @@ public class Job{
 	   // that task completes in one Job, the other will also see it as complete.
 	   // This is not wanted.
 	   for (Task t : jobType.getTasks()) {
-			this.tasks.add(new Task(t));
+			this.tasks.add(new Task(t, startTime + duration));
 	   }
     }
     public String getJobID() {

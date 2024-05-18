@@ -1,4 +1,4 @@
-public class Task implements Cloneable {
+public class Task {
 	public class MissingSizeException extends Exception {
 		public MissingSizeException() {
 			super("No size specified for the task nor the task type it has had a default size.");
@@ -9,6 +9,7 @@ public class Task implements Cloneable {
 	private TaskType taskType;
 	private double taskSize;
 	private double processingTime;
+	private double jobDeadline;
 	private boolean isCompleted;
 	private boolean processing;
 	
@@ -28,8 +29,13 @@ public class Task implements Cloneable {
 	}
 
 	// copy constructor (can't help it, C++ has spoiled me)
-	public Task(Task other) {
+	public Task(Task other, double jd) {
 		this(other.taskID, other.taskType, other.taskSize);
+		jobDeadline = jd;
+	}
+
+	public double getJobDeadline() {
+		return jobDeadline;
 	}
 
 	public String getTaskID() {

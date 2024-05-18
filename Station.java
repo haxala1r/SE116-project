@@ -101,16 +101,47 @@ public class Station {
             return;
         }
 
-        if (idle || tasksInProgress.size() < maxCapacity) {
-            processTask(task);
-        } else {
-            waitingTasks.add(task);
-        }
+        waitingTasks.add(task);
+		reallocateCapacity();
     }
+
+	private ArrayList<Task> getAllowedTasks() {
+		// Searches waitingTasks for tasks we are allowed to process.
+		// This is necessary to handle MULTIFLAG.
+		System.out.println(MULTIFLAG);
+		if (MULTIFLAG)
+			return waitingTasks;
+		if (idle)
+			return waitingTasks;
+
+		ArrayList<Task> allowed = new ArrayList<>();
+		for (Task t : waitingTasks) {
+			if (t.getTaskType() == tasksInProgress.get(0).getTaskType()) {
+				allowed.add(t);
+			}
+		}
+		return allowed;
+	}
 
 	private void reallocateCapacity() {
 		while (!waitingTasks.isEmpty() && tasksInProgress.size() < maxCapacity) {
-			processTask(waitingTasks.remove(0)); // TODO: allow for different scheduling systems
+			ArrayList<Task> allowed = getAllowedTasks();
+			Task task = null;
+			if (FIFOFLAG) {
+				task = allowed.get(0);
+			} else {
+				double earliest = Double.MAX_VALUE;
+				for (Task t : allowed) {
+					if (t.getJobDeadline() < earliest) {
+						task = t;
+						earliest = t.getJobDeadline();
+					}
+				}
+			}
+			if (task == null)
+				break;
+			waitingTasks.remove(task);
+			processTask(task);
 		}
 	}
 
