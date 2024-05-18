@@ -46,7 +46,21 @@ public class EventQueue {
 	}
 
 	private static void checkFinishedJobs() {
-		
+		ArrayList<Job> finishedJobs = new ArrayList<>();
+		for (Job j : activeJobs) {
+			boolean allTasksCompleted = true;
+			for (Task t : j.getTasks()) {
+				if (!t.isTaskCompleted()) {
+					allTasksCompleted = false;
+					break;
+				}
+			}
+			if (allTasksCompleted) {
+				finishedJobs.add(j);
+			}
+		}
+		activeJobs.removeAll(finishedJobs);
+		completedJobs.addAll(finishedJobs);
 	}
 
 	private static boolean nextEvent() {
