@@ -12,7 +12,6 @@ public class JobType{
         allJobTypes.add(this);
     }
    public void addTask(Task task) {
-	   System.out.println("huuu");
         tasks.add(task);
     }
   public String getJobTypeID() {
