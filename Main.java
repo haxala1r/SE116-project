@@ -224,8 +224,8 @@ public class Main {
 	*/
 
 	public static void reportStationUtilization() {
-        for (Station station : stations) {
-            double totalTime = getCurrentTime(); 
+        for (Station station : EventQueue.stations) {
+            double totalTime = EventQueue.getCurrentTime(); 
             double busyTime = totalTime - station.getIdleTime(); 
             double utilization = (busyTime / totalTime) * 100; 
             System.out.println("Station " + station.getStationID() + " Utilization: " + utilization + "%"); 
@@ -235,7 +235,7 @@ public class Main {
 	public static void reportJobTardiness() {
         double totalTardiness = 0;
         int lateJobCount = 0;
-        for (Job job : activeJobs) {
+        for (Job job : EventQueue.activeJobs) {
             double actualEndTime = job.getActualEndTime();
             double deadline = job.getStartTime() + job.getDuration();
             if (actualEndTime > deadline) {
