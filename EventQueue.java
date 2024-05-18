@@ -31,6 +31,7 @@ public class EventQueue {
 				for (Station s : stations) {
 					if (s.canHandleTaskType(t.getTaskType())) {
 						s.addTask(t);
+						break; // add it to only one station.
 					}
 				}
 			}
