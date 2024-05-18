@@ -9,6 +9,7 @@ public class Station {
     private boolean MULTIFLAG;
     private boolean FIFOFLAG;
     private boolean idle;
+	private double idleTime;
 
     public Station(String stationID, int maxCapacity, ArrayList<ProcessingSpeed> pss, boolean MULTIFLAG, boolean FIFOFLAG) {
         this.stationID = stationID;
@@ -17,6 +18,7 @@ public class Station {
         this.MULTIFLAG = MULTIFLAG;
         this.FIFOFLAG = FIFOFLAG;
         this.idle = true;
+		this.idleTime = 0.0;
         this.waitingTasks = new ArrayList<>();
         this.tasksInProgress = new ArrayList<>();
     }
@@ -76,6 +78,10 @@ public class Station {
     public void setIdle(boolean idle) {
         this.idle = idle;
     }
+
+	public double getIdleTime() {
+		return idleTime;
+	}
 
     private void processTask(Task task) {
 		if (tasksInProgress.size() >= maxCapacity)
@@ -185,6 +191,10 @@ public class Station {
         }
     }
 	public void passTime(double time) {
+		if (idle) {
+			idleTime += time;
+		}
+
 		// tasksInProgress holds tasks that are actually being executed, so
 		// time passing will affect all of them at once. waitingTasks are unaffected.
 		ArrayList<Task> completed = new ArrayList<>(); 

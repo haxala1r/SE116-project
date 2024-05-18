@@ -3,11 +3,15 @@ public class EventQueue {
 	private static double currentTime = 0;
 	private static ArrayList<Job> waitingJobs = new ArrayList<>();
 	private static ArrayList<Job> activeJobs = new ArrayList<>();
+	private static ArrayList<Job> completedJobs = new ArrayList<>();
 	private static ArrayList<Station> stations = new ArrayList<>();
 	private static ArrayList<Event> events = new ArrayList<>();
 	
 	public static void addJob(Job j) {
 		waitingJobs.add(j);
+	}
+	public static ArrayList<Job> getCompletedJobs() {
+		return completedJobs;
 	}
 
 	public static void addEvent(Event event) {
@@ -16,6 +20,9 @@ public class EventQueue {
 
 	public static void addStation(Station s) {
 		stations.add(s);
+	}
+	public static ArrayList<Station> getStations() {
+		return stations;
 	}
 	
 	public static double getCurrentTime() {
@@ -36,6 +43,10 @@ public class EventQueue {
 				}
 			}
 		}
+	}
+
+	private static void checkFinishedJobs() {
+		
 	}
 
 	private static boolean nextEvent() {
