@@ -57,6 +57,7 @@ public class EventQueue {
 			}
 			if (allTasksCompleted) {
 				finishedJobs.add(j);
+				addEvent(new Event("Job " + j.getJobID() + " has been completed.", currentTime));
 			}
 		}
 		activeJobs.removeAll(finishedJobs);
