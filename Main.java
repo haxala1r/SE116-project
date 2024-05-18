@@ -178,7 +178,7 @@ public class Main {
 			throw new Exception("Stopped execution because Job file contains error(s).");
 	}
 
-	
+	/* TO BE REMOVED
 	private static ArrayList<Station> findNewStations(TaskType taskType, ArrayList<Station> allStations) {
 		ArrayList<Station> suitableStations = new ArrayList<>();
     	for (Station station : allStations) {
@@ -221,6 +221,37 @@ public class Main {
 			}
 		}
 	}
+	*/
+
+	public static void reportStationUtilization() {
+        for (Station station : stations) {
+            double totalTime = getCurrentTime(); 
+            double busyTime = totalTime - station.getIdleTime(); 
+            double utilization = (busyTime / totalTime) * 100; 
+            System.out.println("Station " + station.getStationID() + " Utilization: " + utilization + "%"); // Değişebilir
+        }
+    }
+
+	public static void reportJobTardiness() {
+        double totalTardiness = 0;
+        int lateJobCount = 0;
+        for (Job j : activeJobs) {
+            double actualEndTime = j.getActualEndTime();
+            double deadline = j.getStartTime() + j.getDuration();
+            if (actualEndTime > deadline) {
+                double tardiness = actualEndTime - deadline;
+                totalTardiness += tardiness;
+                lateJobCount++;
+                System.out.println("Job " + job.getJobID() + " Tardiness: " + tardiness);
+            }
+        }
+        if (lateJobCount > 0) {
+            double averageTardiness = totalTardiness / lateJobCount;
+            System.out.println("Job tardiness printlenir");
+        } else {
+            System.out.println("No  jobs found.");
+        }
+    }
 
 	public static void printInfo() {
 		for (TaskType i : TaskType.getAllTaskTypes()) {
