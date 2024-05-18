@@ -4,6 +4,7 @@ public class Job{
   private JobType jobType;
   private ArrayList<Task> tasks;
   private int startTime;
+  private double endTime;
   private int duration;
   public Job(String jobID, JobType jobType,int startTime,int duration){
        this.jobID = jobID;
@@ -19,8 +20,8 @@ public class Job{
 	   for (Task t : jobType.getTasks()) {
 			this.tasks.add(new Task(t));
 	   }
-  }
-   public String getJobID() {
+    }
+    public String getJobID() {
         return jobID;
     }
 
@@ -43,6 +44,14 @@ public class Job{
     public void setStartTime(int startTime) {
         this.startTime = startTime;
     }
+	
+	public double getActualEndTime() {
+		return endTime;
+	}
+	
+	public void setActualEndTime(double endTime) {
+		this.endTime = endTime;
+	}
 
     public int getDuration() {
         return duration;
