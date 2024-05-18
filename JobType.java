@@ -35,6 +35,6 @@ public class JobType{
 		return null;
    }
     public static ArrayList<JobType> getAllJobTypes() {
-        return allJobTypes;
+        return 
     }
 }
