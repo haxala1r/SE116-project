@@ -1,5 +1,5 @@
 public class Task {
-	public class MissingSizeException extends Exception {
+	public static class MissingSizeException extends Exception {
 		public MissingSizeException() {
 			super("No size specified for the task nor the task type it has had a default size.");
 		}

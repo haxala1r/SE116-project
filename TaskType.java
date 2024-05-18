@@ -5,10 +5,17 @@ public class TaskType {
 	private boolean hasDefaultSize;
 	private static ArrayList<TaskType> allTaskTypes = new ArrayList<>();
 	
-	public TaskType(String taskTypeName, double defaultTaskSize) {
+	public TaskType(String taskTypeName, double defaultTaskSize) throws Exception {
 		this.taskTypeName = taskTypeName;
 		this.defaultTaskSize = defaultTaskSize;
 		hasDefaultSize = true;
+
+		if (defaultTaskSize <= 0) {
+			throw new Exception("TaskType " + taskTypeName + " cannot accept negative size: " + defaultTaskSize);
+		}
+		if (!Character.isLetter(taskTypeName.charAt(0))) {
+			throw new Exception(taskTypeName + " is not a valid TaskType name.");
+		}
 	}
 	
 	public TaskType(String taskTypeName) {

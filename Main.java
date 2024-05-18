@@ -12,13 +12,13 @@ public class Main {
 		}
 	}
 
-	private static void readTaskTypes(String wholeStr) throws InvalidSyntaxException {
+	private static void readTaskTypes(String wholeStr) throws Exception {
 		// we take the whole file as input, then figure out where the task types are.
 		// This probably isn't necessary, but it allows for more flexibility in the input file,
 		// and also lets us avoid reading line-by-line (which can cause some awkward situations
 		// with regex)
-		Pattern subPattern = Pattern.compile("(\\w+)\\s*(\\d+(\\.\\d+)?)?\\s*");
-		Pattern wholePattern = Pattern.compile("\\(TASKTYPES\\s+((\\w+)(\\s+\\d+(\\.\\d+)?)?\\s*)+\\)");
+		Pattern subPattern = Pattern.compile("(\\w+)\\s*(\\-?\\d+(\\.\\d+)?)?\\s*");
+		Pattern wholePattern = Pattern.compile("\\(TASKTYPES\\s+((\\w+)(\\s+\\-?\\d+(\\.\\d+)?)?\\s*)+\\)");
 		Matcher matcher = wholePattern.matcher(wholeStr);
 		
 		if (!matcher.find())
@@ -129,7 +129,7 @@ public class Main {
 		}
 	}
 
-	public static void readWorkFlowFile(String fname) throws InvalidSyntaxException, Task.MissingSizeException {
+	public static void readWorkFlowFile(String fname) throws InvalidSyntaxException, Task.MissingSizeException, Exception {
 		Scanner sc = null;
 		try {
 			sc = new Scanner(Paths.get(fname));
@@ -261,11 +261,15 @@ public class Main {
 			System.out.println("Usage:\n\tjava Main.java [workflow file path] [job file path]");
 			return;
 		}
-		readWorkFlowFile(args[0]);
-		printInfo();
+		try {
+			readWorkFlowFile(args[0]);
+			printInfo();
 
-		readJobFile(args[1]);
+			readJobFile(args[1]);
 		
-		EventQueue.fill();
+			EventQueue.fill();
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage());
+		}
 	}
 }
