@@ -55,11 +55,11 @@ public class Station {
         this.tasksInProgress = tasksInProgress;
     }
 
-    public boolean isMULTIFAG() {
+    public boolean isMULTIFLAG() {
         return MULTIFLAG;
     }
 
-    public void setMULTIFAG(boolean MULTIFLAG) {
+    public void setMULTIFLAG(boolean MULTIFLAG) {
         this.MULTIFLAG = MULTIFLAG;
     }
 
@@ -81,6 +81,9 @@ public class Station {
 
 	public double getIdleTime() {
 		return idleTime;
+	}
+	public ArrayList<ProcessingSpeed> getProcessingSpeeds() {
+		return processingSpeeds;
 	}
 
     private void processTask(Task task) {

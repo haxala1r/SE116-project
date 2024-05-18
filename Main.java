@@ -248,12 +248,22 @@ public class Main {
 		for (TaskType i : TaskType.getAllTaskTypes()) {
 			System.out.printf("TaskType '%s' with default size %f%n", i.getTaskTypeName(), i.getDefaultTaskSize());
 		}
-		/*for (JobType i : jobTypes) {
+		for (JobType i : JobType.getAllJobTypes()) {
 			System.out.printf("JobType '%s' with tasks:%n", i.getJobTypeID());
 			for (Task j : i.getTasks()) {
 				System.out.printf("\tTask '%s' with size %f%n", j.getTaskID(), j.getTaskSize());
 			}
-		}*/
+		}
+		for (Station s : EventQueue.getStations()) {
+			String str = "Station " + s.getStationID() + ":\n\tCapacity " + s.getMaxCapacity();
+			str += "\n\tMULTIFLAG: " + s.isMULTIFLAG();
+			str += "\n\tFIFOFLAG: " + s.isFIFOFLAG();
+			for (ProcessingSpeed speed : s.getProcessingSpeeds()) {
+				str += " \n\t\tTaskType: " + speed.getTaskType().getTaskTypeName() + ", speed: " + speed.getSpeed() + ", deviation: " + speed.getDeviation();
+
+			}
+			System.out.println(str);
+		}
 	}
 
 	public static void main(String[] args) throws Exception{
