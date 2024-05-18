@@ -52,7 +52,7 @@ public class Main {
 		}
 	}
 	
-	public static void readJobTypes(String wholeStr) throws InvalidSyntaxException, Task.MissingSizeException {
+	public static void readJobTypes(String wholeStr) throws InvalidSyntaxException, Task.MissingSizeException, Exception {
 		// Task type and size regex. Task Type ID followed optionally by a size.
 		String tsRegex = "\\s*(\\w+)(\\s+(\\d+(\\.\\d+)?))?\\s*";
 		Pattern tsPattern = Pattern.compile(tsRegex);

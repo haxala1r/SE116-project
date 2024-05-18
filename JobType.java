@@ -6,10 +6,12 @@ public class JobType{
     private ArrayList<Task> tasks;
     private static ArrayList<JobType> allJobTypes = new ArrayList<>();
 
-    public JobType(String jobTypeID) {
+    public JobType(String jobTypeID) throws Exception {
         this.jobTypeID = jobTypeID;
         this.tasks = new ArrayList<>();
         allJobTypes.add(this);
+		if (!Character.isLetter(jobTypeID.charAt(0)))
+			throw new Exception(jobTypeID + " is not a valid JobType ID.");
     }
    public void addTask(Task task) {
         tasks.add(task);
