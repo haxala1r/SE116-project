@@ -46,11 +46,9 @@ public class Task implements Cloneable {
 
 	public void reduceProcessingTime(double time) {
         processingTime -= time;
-        if (processingTime < 0) {
+        if (processingTime < 0.000001) {
             processingTime = 0; 
-        }
-        if (processingTime == 0) {
-            completeTask();
+			completeTask();
         }
     }
 

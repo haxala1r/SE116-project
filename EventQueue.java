@@ -89,8 +89,8 @@ public class EventQueue {
 			}
 		}
 
-		
 		if (station == null && startingJob == null) {
+			checkFinishedJobs();
 			/* No event has actually happened, no events left. */
 			addEvent(new Event("All Tasks and Jobs finished.", currentTime));
 			return false;
@@ -101,6 +101,7 @@ public class EventQueue {
 		for (Station s : stations) {
 			s.passTime(earliest - old);
 		}
+		checkFinishedJobs();
 		if (startingJob != null) {
 			// a job must start now.
 			addEvent(new Event("Job " + startingJob.getJobID() + " has started.", earliest));
