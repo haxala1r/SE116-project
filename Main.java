@@ -278,6 +278,8 @@ public class Main {
 			readJobFile(args[1]);
 		
 			EventQueue.fill();
+			reportStationUtilization();
+			reportJobTardiness();
 		} catch (Exception e) {
 			System.out.println("Error: " + e.getMessage());
 		}
