@@ -1,8 +1,6 @@
-# SE 116 Project
+# Job to Station Scheduling System
 
-This repository is for our SE 116 Project.
-
-# Team Members
+## Team Members
 
     - Alp Eren Sağdıç
     - Halil Görkem Yiğit
